@@ -1,0 +1,218 @@
+version: '3.8'
+
+services:
+  chrome-0:
+    image: zenika/alpine-chrome:latest
+    container_name: hasystem-chrome-0
+    restart: always
+    command: --no-sandbox --remote-debugging-address=0.0.0.0 --remote-debugging-port=9222 http://www.hasystem.com/customer/ping
+    ports:
+      - "9222:9222"
+    dns: 10.7.0.2
+    networks:
+      - hasystem_network
+
+  dns-0:
+    image: ubuntu/bind9:9.18-22.04_beta
+    container_name: hasystem-dns-0
+    restart: always
+    environment:
+      TZ: UTC
+    volumes:
+      - ./bind9/named.conf.local:/etc/bind/named.conf.local:ro
+      - ./bind9/db.hasystem.com:/etc/bind/db.hasystem.com:ro
+      - ./bind9/db.10:/etc/bind/db.10:ro
+    networks:
+      hasystem_network:
+        ipv4_address: 10.7.0.2
+
+  haproxy-0:
+    image: haproxy:2.8-alpine
+    container_name: hasystem-haproxy-0
+    restart: always
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
+    ports:
+      - "1936:1936"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    networks:
+      hasystem_network:
+        ipv4_address: 10.7.0.3
+
+  haproxy-consul-sidecar-0:
+    build: ./consul
+    image: hasystem/hasystem-consul-client:latest
+    container_name: hasystem-haproxy-consul-sidecar-0
+    restart: always
+    command: -node=haproxy-consul-client-0
+    volumes:
+      - ./consul/consul-client.json:/consul/config/consul.json:ro
+    network_mode: service:haproxy-0
+    networks:
+      - hasystem_network
+
+  haproxy-1:
+    image: haproxy:2.8-alpine
+    container_name: hasystem-haproxy-1
+    restart: always
+    sysctls:
+      - net.ipv4.ip_unprivileged_port_start=0
+    ports:
+      - "1937:1936"
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    networks:
+      hasystem_network:
+        ipv4_address: 10.7.0.4
+
+  haproxy-consul-sidecar-1:
+    build: ./consul
+    image: hasystem/hasystem-consul-client:latest
+    container_name: hasystem-haproxy-consul-sidecar-1
+    restart: always
+    command: -node=haproxy-consul-client-1
+    volumes:
+      - ./consul/consul-client.json:/consul/config/consul.json:ro
+    network_mode: service:haproxy-1
+    networks:
+      - hasystem_network
+
+  consul-server-0:
+    image: consul:1.15
+    container_name: hasystem-consul-server-0
+    restart: always
+    command: agent -config-dir=/consul/config/ -node=consul-server-0 -dev -advertise=10.7.0.10
+    ports:
+      - "8500:8500"
+    volumes:
+      - ./consul/consul-server.json:/consul/config/consul.json:ro
+    networks:
+      hasystem_network:
+        ipv4_address: 10.7.0.10
+
+  consul-server-1:
+    image: consul:1.15
+    container_name: hasystem-consul-server-1
+    restart: always
+    command: agent -config-dir=/consul/config/ -node=consul-server-1 -dev -advertise=10.7.0.11
+    ports:
+      - "8501:8500"
+    volumes:
+      - ./consul/consul-server.json:/consul/config/consul.json:ro
+    networks:
+      hasystem_network:
+        ipv4_address: 10.7.0.11
+
+  consul-server-2:
+    image: consul:1.15
+    container_name: hasystem-consul-server-2
+    restart: always
+    command: agent -config-dir=/consul/config/ -node=consul-server-2 -dev -advertise=10.7.0.12
+    ports:
+      - "8502:8500"
+    volumes:
+      - ./consul/consul-server.json:/consul/config/consul.json:ro
+    networks:
+      hasystem_network:
+        ipv4_address: 10.7.0.12
+
+  api-gw-0:
+    image: hasystem/hasystem-api-gw:latest
+    container_name: hasystem-api-gw-0
+    restart: always
+    environment:
+      CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+      CUSTOMER_URL: http://hasystem-customer.service.consul:8081/customer/
+    dns: 127.0.0.1
+    networks:
+      - hasystem_network
+
+  api-gw-consul-sidecar-0:
+    build: ./consul
+    image: hasystem/hasystem-consul-client:latest
+    container_name: hasystem-api-gw-consul-sidecar-0
+    restart: always
+    command: -node=api-gw-consul-client-0
+    volumes:
+      - ./consul/consul-client.json:/consul/config/consul.json:ro
+    network_mode: service:api-gw-0
+    networks:
+      - hasystem_network
+
+  api-gw-1:
+    image: hasystem/hasystem-api-gw:latest
+    container_name: hasystem-api-gw-1
+    restart: always
+    environment:
+      CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+      CUSTOMER_URL: http://hasystem-customer.service.consul:8081/customer/
+    dns: 127.0.0.1
+    networks:
+      - hasystem_network
+
+  api-gw-consul-sidecar-1:
+    build: ./consul
+    image: hasystem/hasystem-consul-client:latest
+    container_name: hasystem-api-gw-consul-sidecar-1
+    restart: always
+    command: -node=api-gw-consul-client-1
+    volumes:
+      - ./consul/consul-client.json:/consul/config/consul.json:ro
+    network_mode: service:api-gw-1
+    networks:
+      - hasystem_network
+
+  customer-0:
+    image: hasystem/hasystem-customer:latest
+    container_name: hasystem-customer-0
+    restart: always
+    environment:
+      CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+    dns: 127.0.0.1
+    networks:
+      - hasystem_network
+
+  customer-consul-sidecar-0:
+    build: ./consul
+    image: hasystem/hasystem-consul-client:latest
+    container_name: hasystem-customer-consul-sidecar-0
+    restart: always
+    command: -node=customer-consul-client-0
+    volumes:
+      - ./consul/consul-client.json:/consul/config/consul.json:ro
+    network_mode: service:customer-0
+    networks:
+      - hasystem_network
+
+  customer-1:
+    image: hasystem/hasystem-customer:latest
+    container_name: hasystem-customer-1
+    restart: always
+    environment:
+      CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
+    dns: 127.0.0.1
+    networks:
+      - hasystem_network
+
+  customer-consul-sidecar-1:
+    build: ./consul
+    image: hasystem/hasystem-consul-client:latest
+    container_name: hasystem-customer-consul-sidecar-1
+    restart: always
+    command: -node=customer-consul-client-1
+    volumes:
+      - ./consul/consul-client.json:/consul/config/consul.json:ro
+    network_mode: service:customer-1
+    networks:
+      - hasystem_network
+
+networks:
+  hasystem_network:
+    name: hasystem-network
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.7.0.0/16
+          ip_range: 10.7.1.0/24
+          gateway: 10.7.0.1
