@@ -1,0 +1,23 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: hasystem-customer
+  main:
+    banner-mode: off
+  cloud:
+    consul:
+      host: ${CONSUL_HOST:localhost}
+      port: ${CONSUL_PORT:8500}
+      discovery:
+        health-check-path: ${management.endpoints.web.base-path}/health
+        health-check-interval: 10s
+        prefer-ip-address: ${CONSUL_DISCOVERY_PREFER_IP_ADDRESS:false}
+        hostname: ${CONSUL_DISCOVERY_HOSTNAME:localhost}
+
+management:
+  endpoints:
+    web:
+      base-path: /actuator
+
