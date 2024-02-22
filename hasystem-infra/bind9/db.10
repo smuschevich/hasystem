@@ -3,7 +3,7 @@
 ;
 $TTL	604800
 @	IN	SOA	hasystem.com. root.hasystem.com. (
-			     11		; Serial
+			      2		; Serial
 			 604800		; Refresh
 			  86400		; Retry
 			2419200		; Expire
@@ -12,4 +12,3 @@ $TTL	604800
 @	IN	NS	ns.
 3	IN	PTR	ns.hasystem.com.
 3	IN	www	www.hasystem.com.
-4	IN	www	www.hasystem.com.

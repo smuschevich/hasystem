@@ -22,6 +22,7 @@ services:
       - ./bind9/named.conf.local:/etc/bind/named.conf.local:ro
       - ./bind9/db.hasystem.com:/etc/bind/db.hasystem.com:ro
       - ./bind9/db.10:/etc/bind/db.10:ro
+      - ./bind9/db.service.local:/etc/bind/db.service.local:ro
     networks:
       hasystem_network:
         ipv4_address: 10.7.0.2
@@ -123,8 +124,8 @@ services:
     restart: always
     environment:
       CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
-      CUSTOMER_URL: http://hasystem-customer.service.consul:8081/customer/
-    dns: 127.0.0.1
+      CUSTOMER_URL: http://customer.service.local:8081/customer/
+    dns: 10.7.0.2
     networks:
       - hasystem_network
 
@@ -146,8 +147,8 @@ services:
     restart: always
     environment:
       CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
-      CUSTOMER_URL: http://hasystem-customer.service.consul:8081/customer/
-    dns: 127.0.0.1
+      CUSTOMER_URL: http://customer.service.local:8081/customer/
+    dns: 10.7.0.2
     networks:
       - hasystem_network
 
@@ -169,7 +170,7 @@ services:
     restart: always
     environment:
       CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
-    dns: 127.0.0.1
+    dns: 10.7.0.2
     networks:
       - hasystem_network
 
@@ -191,7 +192,7 @@ services:
     restart: always
     environment:
       CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
-    dns: 127.0.0.1
+    dns: 10.7.0.2
     networks:
       - hasystem_network
 
