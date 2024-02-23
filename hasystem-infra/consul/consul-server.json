@@ -1,16 +1,16 @@
 {
-  "datacenter": "by-1",
   "server": true,
-  "bootstrap_expect": 1,
+  "datacenter": "by-1",
+  "bootstrap_expect": 3,
   "data_dir": "/consul/data",
-  "log_level": "INFO",
+  "bind_addr": "0.0.0.0",
+  "client_addr": "0.0.0.0",
+  "retry_join": ["hasystem-consul-server-0:8301", "hasystem-consul-server-1:8301", "hasystem-consul-server-2:8301"],
+  "leave_on_terminate": true,
+  "rejoin_after_leave": true,
   "ui_config": {
     "enabled": true,
     "content_path": "/ui/"
   },
-  "leave_on_terminate": true,
-  "rejoin_after_leave": true,
-  "retry_join": ["hasystem-consul-server-0:8301", "hasystem-consul-server-1:8301", "hasystem-consul-server-2:8301"],
-  "bind_addr": "0.0.0.0",
-  "client_addr": "0.0.0.0"
+  "log_level": "INFO"
 }

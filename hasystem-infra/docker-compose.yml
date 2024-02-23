@@ -83,7 +83,7 @@ services:
     image: consul:1.15
     container_name: hasystem-consul-server-0
     restart: always
-    command: agent -config-dir=/consul/config/ -node=consul-server-0 -dev -advertise=10.7.0.10
+    command: agent -config-dir=/consul/config/ -node=consul-server-0 -advertise=10.7.0.10
     ports:
       - "8500:8500"
     volumes:
@@ -96,7 +96,7 @@ services:
     image: consul:1.15
     container_name: hasystem-consul-server-1
     restart: always
-    command: agent -config-dir=/consul/config/ -node=consul-server-1 -dev -advertise=10.7.0.11
+    command: agent -config-dir=/consul/config/ -node=consul-server-1 -advertise=10.7.0.11
     ports:
       - "8501:8500"
     volumes:
@@ -109,7 +109,7 @@ services:
     image: consul:1.15
     container_name: hasystem-consul-server-2
     restart: always
-    command: agent -config-dir=/consul/config/ -node=consul-server-2 -dev -advertise=10.7.0.12
+    command: agent -config-dir=/consul/config/ -node=consul-server-2 -advertise=10.7.0.12
     ports:
       - "8502:8500"
     volumes:

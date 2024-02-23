@@ -1,12 +1,9 @@
 {
-  "datacenter": "by-1",
   "server": false,
+  "datacenter": "by-1",
   "data_dir": "/consul/data",
-  "log_level": "INFO",
-  "leave_on_terminate": false,
-  "retry_join": ["hasystem-consul-server-0:8301", "hasystem-consul-server-1:8301", "hasystem-consul-server-2:8301"],
   "client_addr": "127.0.0.1",
-  "ports": {
-    "dns": 53
-  }
+  "retry_join": ["hasystem-consul-server-0:8301", "hasystem-consul-server-1:8301", "hasystem-consul-server-2:8301"],
+  "leave_on_terminate": false,
+  "log_level": "INFO"
 }
