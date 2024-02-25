@@ -10,9 +10,9 @@ $TTL	604800
 			 604800 )	; Negative Cache TTL
 ;
 @	IN	NS	ns.hasystem.com.
-ns	IN	A	10.7.0.3
-@	IN	A	10.7.0.3
-    IN	A	10.7.0.4
+ns	IN	A	10.7.0.4
+@	IN	A	10.7.0.4
+    IN	A	10.7.0.5
 @	IN	AAAA	::1
-www IN  A   10.7.0.3
-    IN  A   10.7.0.4
+www IN  A   10.7.0.4
+    IN  A   10.7.0.5

@@ -8,7 +8,9 @@ services:
     command: --no-sandbox --remote-debugging-address=0.0.0.0 --remote-debugging-port=9222 http://www.hasystem.com/customer/ping
     ports:
       - "9222:9222"
-    dns: 10.7.0.2
+    dns:
+     - 10.7.0.2
+     - 10.7.0.3
     networks:
       - hasystem_network
 
@@ -27,6 +29,21 @@ services:
       hasystem_network:
         ipv4_address: 10.7.0.2
 
+  dns-1:
+    image: ubuntu/bind9:9.18-22.04_beta
+    container_name: hasystem-dns-1
+    restart: always
+    environment:
+      TZ: UTC
+    volumes:
+      - ./bind9/named.conf.local:/etc/bind/named.conf.local:ro
+      - ./bind9/db.hasystem.com:/etc/bind/db.hasystem.com:ro
+      - ./bind9/db.10:/etc/bind/db.10:ro
+      - ./bind9/db.service.local:/etc/bind/db.service.local:ro
+    networks:
+      hasystem_network:
+        ipv4_address: 10.7.0.3
+
   haproxy-0:
     image: haproxy:2.8-alpine
     container_name: hasystem-haproxy-0
@@ -39,7 +56,7 @@ services:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     networks:
       hasystem_network:
-        ipv4_address: 10.7.0.3
+        ipv4_address: 10.7.0.4
 
   haproxy-consul-sidecar-0:
     build: ./consul
@@ -65,7 +82,7 @@ services:
       - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
     networks:
       hasystem_network:
-        ipv4_address: 10.7.0.4
+        ipv4_address: 10.7.0.5
 
   haproxy-consul-sidecar-1:
     build: ./consul
@@ -125,7 +142,9 @@ services:
     environment:
       CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
       CUSTOMER_URL: http://customer.service.local:8081/customer/
-    dns: 10.7.0.2
+    dns:
+      - 10.7.0.2
+      - 10.7.0.3
     networks:
       - hasystem_network
 
@@ -148,7 +167,9 @@ services:
     environment:
       CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
       CUSTOMER_URL: http://customer.service.local:8081/customer/
-    dns: 10.7.0.2
+    dns:
+      - 10.7.0.2
+      - 10.7.0.3
     networks:
       - hasystem_network
 
@@ -170,7 +191,9 @@ services:
     restart: always
     environment:
       CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
-    dns: 10.7.0.2
+    dns:
+      - 10.7.0.2
+      - 10.7.0.3
     networks:
       - hasystem_network
 
@@ -192,7 +215,9 @@ services:
     restart: always
     environment:
       CONSUL_DISCOVERY_PREFER_IP_ADDRESS: true
-    dns: 10.7.0.2
+    dns:
+      - 10.7.0.2
+      - 10.7.0.3
     networks:
       - hasystem_network
 

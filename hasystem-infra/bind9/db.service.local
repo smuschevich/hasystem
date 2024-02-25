@@ -10,11 +10,11 @@ $TTL	604800
 			 604800 )	; Negative Cache TTL
 ;
 @	IN	NS	ns.service.local.
-ns	IN	A	10.7.0.3
-@	IN	A	10.7.0.3
-    IN	A	10.7.0.4
+ns	IN	A	10.7.0.4
+@	IN	A	10.7.0.4
+    IN	A	10.7.0.5
 @	IN	AAAA	::1
-api-gw   IN  A   10.7.0.3
-         IN  A   10.7.0.4
-customer IN  A   10.7.0.3
-         IN  A   10.7.0.4
+api-gw   IN  A   10.7.0.4
+         IN  A   10.7.0.5
+customer IN  A   10.7.0.4
+         IN  A   10.7.0.5
